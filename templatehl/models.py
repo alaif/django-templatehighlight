@@ -55,8 +55,9 @@ def compile_string(template_string, origin):
     return parser.parse()
 
 def block_description_callback(**highlight_args):
-    #return u'<!-- block: %(block)s , file: %(fname)s -->' % highlight_args
-    return u'<debug block="%(block)s" file="%(fname)s" />' % highlight_args
+    return u'<!-- block: %(block)s , file: %(fname)s -->' % highlight_args
+    #return u'<debug block="%(block)s" file="%(fname)s" />' % highlight_args
+    #return u'<span style="display: none;" >block="%(block)s" file="%(fname)s"</span>' % highlight_args
 
 def do_block(parser, token):
     """
