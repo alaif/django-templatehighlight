@@ -54,10 +54,14 @@ def compile_string(template_string, origin):
     parser = parser_class(lexer.tokenize())
     return parser.parse()
 
-def block_description_callback(**highlight_args):
-    return u'<!-- block: %(block)s , file: %(fname)s -->' % highlight_args
-    #return u'<debug block="%(block)s" file="%(fname)s" />' % highlight_args
+def block_start_description_callback(**highlight_args):
+    return u'<!-- startblock: %(block)s , file: %(fname)s -->' % highlight_args
+    #return u'\n<block name="%(block)s" path="%(fname)s" />' % highlight_args
     #return u'<span style="display: none;" >block="%(block)s" file="%(fname)s"</span>' % highlight_args
+
+def block_end_description_callback(**highlight_args):
+    return u'<!-- endblock: %(block)s , file: %(fname)s -->' % highlight_args
+    #return u'\n</block> <!-- endblock: %(block)s -->' % highlight_args
 
 def do_block(parser, token):
     """
@@ -83,8 +87,14 @@ def do_block(parser, token):
             'fname': token.origin_name,
             'block': block_name
         }
-        hl_node = TextNode(block_description_callback(**hl_args))
-        nodelist.append(hl_node)
+        block_start = block_start_description_callback(**hl_args)
+        block_end = block_end_description_callback(**hl_args)
+        if block_start:
+            hl_node = TextNode(block_start)
+            nodelist.insert(0, hl_node)
+        if block_end:
+            hl_node = TextNode(block_end)
+            nodelist.append(hl_node)
 
     parser.delete_first_token()
     return loader_tags.BlockNode(block_name, nodelist)
